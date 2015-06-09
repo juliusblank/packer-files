@@ -1,0 +1,74 @@
+{
+    "variables": {
+        "core": 2,
+        "memory": 2048,
+        "disk_size": 40960,
+        "ssh_port": 22,
+        "hostname": "docker",
+        "build_proxy": "{{env `http_proxy`}}",
+        "run_proxy": ""
+    },
+
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "execute_command": "echo 'czm'| {{ .Vars }} sudo -E -S sh '{{.Path}}'",
+            "environment_vars": [
+                "build_proxy={{user `build_proxy`}}",
+                "run_proxy={{user `run_proxy`}}"
+            ],
+            "scripts": [
+              "scripts/setup.sh",
+              "scripts/setup-cgroups.sh"
+            ]
+    }
+  ],
+
+    "builders": [
+        {
+            "type": "vmware-iso",
+            "vm_name": "{{user `hostname`}}",
+            "guest_os_type": "ubuntu-64",
+            "disk_size": "{{user `disk_size`}}",
+            "iso_url": "http://releases.ubuntu.com/14.04.2/ubuntu-14.04.2-server-amd64.iso",
+            "iso_checksum": "83aabd8dcf1e8f469f3c72fff2375195",
+            "iso_checksum_type": "md5",
+            "vmx_data": {
+                "cpuid.coresPerSocket": "1",
+                "memsize": "{{user `memory`}}",
+                "numvcpus": "{{user `core`}}"
+            },
+
+            "ssh_username": "czm",
+            "ssh_password": "czm",
+            "ssh_port": "{{user `ssh_port`}}",
+            "ssh_wait_timeout": "10m",
+
+            "http_directory": "http_installer_content",
+            "http_port_min": "9001",
+            "http_port_max": "9001",
+
+            "boot_command": [
+        "<esc><esc><enter><wait>",
+        "/install/vmlinuz noapic ",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
+        "debian-installer auto ",
+        "locale=de_DE ",
+        "language=de ",
+        "country=DE ",
+        "keyboard-configuration/layoutcode=de ",
+        "keyboard-configuration/modelcode=pc105 ",
+        "localechooser/translation/warn-light=true ",
+        "localechooser/translation/warn-severe=true ",
+        "console-setup/ask-detect=false ",
+        "mirror/http/proxy= ",
+        "hostname={{user `hostname`}} ",
+        "fb=false ",
+        "debconf/frontend=noninteractive ",
+        "initrd=/install/initrd.gz -- <enter>"
+      ],
+            "shutdown_command": "echo 'shutdown -P now' > /tmp/shutdown.sh; echo 'czm'|sudo -S sh '/tmp/shutdown.sh'"
+    }
+  ]
+}
