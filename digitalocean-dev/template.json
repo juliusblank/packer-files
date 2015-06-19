@@ -1,0 +1,43 @@
+{
+    "push": {
+      "name": "juliusblank/endpoint"
+    },
+
+    "variables": {
+        "DIGITALOCEAN_TOKEN": "{{env `DIGITALOCEAN_TOKEN`}}",
+        "DROPLET_NAME": "{{env `DIGITALOCEAN_DROPLET_NAME`}}",
+        "IMAGE": "{{env `DIGITALOCEAN_IMAGE`}}",
+        "REGION": "{{env `DIGITALOCEAN_REGION`}}",
+        "SIZE": "{{env `DIGITALOCEAN_SIZE`}}",
+        "build_proxy": "{{env `http_proxy`}}",
+        "run_proxy": ""
+    },
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "execute_command": "echo 'czm'| {{ .Vars }} sudo -E -S sh '{{.Path}}'",
+            "environment_vars": [
+                "build_proxy={{user `build_proxy`}}",
+                "run_proxy={{user `run_proxy`}}"
+            ],
+            "scripts": [
+              "scripts/setup.sh"
+            ]
+    }
+  ],
+
+    "builders": [
+        {
+            "type": "digitalocean",
+            "api_token": "{{user `DIGITALOCEAN_TOKEN`}}",
+            "droplet_name": "{{user `DROPLET_NAME`}}",
+            "image": "{{user `IMAGE`}}",
+            "snapshot_name": "{{user `DROPLET_NAME`}}-{{timestamp}}",
+            "private_networking": "false",
+            "region": "{{user `REGION`}}",
+            "size": "{{user `SIZE`}}",
+            "ssh_port": "22"
+    }
+  ]
+}
