@@ -1,5 +1,16 @@
 #!/bin/bash
 
+###############################################################################
+# TODO Setup packer for validating templates                                  #
+# TODO Setup iptables                                                         #
+# TODO Keys?                                                                  #
+# TODO Update this script according to the new 15.04 script from work         #
+# TODO Setup azure-cli (container with systemd-unit (systemd-docker)          #
+# TODO Setup mesosphere dcos                                                  #
+# TODO Setup AWS cli                                                          #
+# TODO                                                                        #
+###############################################################################
+
 set -e
 
 ###############################################################################
@@ -25,20 +36,7 @@ echo deb https://get.docker.com/ubuntu docker main > /etc/apt/sources.list.d/doc
 apt-get update
 apt-get -y upgrade
 
-
-# install lpackage
-# linux-image-extra-$(uname -r)
-# linux-image-extra-virtual
-# linux-headers-$(uname -r)   
-# curl                         - tool to transfer a URL
-# wget                         - The non-interactive network downloader
-# vim                          - vi improved
-# git                          - the stupid content tracker
-# htop                         - interactive process viewer
-# lxc-docker                   - docker
-# cgroup-bin                   - cgroup support programs
-# cgmanager-utils              - client script to simplify making requests of the cgroup manager
-# iotop                        - simple top-like I/O monitor
+# Install required packages
 apt-get -y install \
            linux-image-extra-$(uname -r) \
            linux-image-extra-virtual\
@@ -47,10 +45,10 @@ apt-get -y install \
            wget \
            vim \
            git \
+           unzip \
+           screen \
            htop \
            lxc-docker \
-           cgroup-bin \
-           cgmanager-utils \
            iotop
            
 # Create user julius
