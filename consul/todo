@@ -1,0 +1,4 @@
+Create an ubuntu 15.04 droplet here, that has consul installed
+Maybe use https://github.com/progrium/docker-consul. This would mean creating a docker host that then gets the container.
+
+Can I spin up a CoreOs cluster on DO via terraform that runs consul? That sounds promising. Maybe with Kubernetes...
