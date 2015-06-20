@@ -2,6 +2,7 @@
 
 ###############################################################################
 # TODO Setup packer for validating templates                                  #
+# TODO Setup ~/.bashrc                                                        #
 # TODO Setup iptables                                                         #
 # TODO Keys?                                                                  #
 # TODO Update this script according to the new 15.04 script from work         #
