@@ -1,0 +1,44 @@
+{
+    "push": {
+      "name": "juliusblank/consul-client"
+    },
+
+    "variables": {
+        "DIGITALOCEAN_TOKEN": "{{env `DIGITALOCEAN_TOKEN`}}",
+        "DROPLET_NAME": "{{env `DIGITALOCEAN_DROPLET_NAME`}}",
+        "IMAGE": "{{env `DIGITALOCEAN_IMAGE`}}",
+        "REGION": "{{env `DIGITALOCEAN_REGION`}}",
+        "SIZE": "{{env `DIGITALOCEAN_SIZE`}}",
+        "CONSUL_VERSION": "{{env `CONSUL_VERSION`}}",
+        "consul_node_type": "client"
+    },
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "execute_command": "echo 'czm'| {{ .Vars }} sudo -E -S sh '{{.Path}}'",
+            "environment_vars": [
+                "build_proxy={{user `build_proxy`}}",
+                "run_proxy={{user `run_proxy`}}"
+            ],
+            "scripts": [
+              "scripts/setup_base.sh",
+              "scripts/setup_consul-{{user `consul_node_type`}}.sh"
+            ]
+    }
+  ],
+
+    "builders": [
+        {
+            "type": "digitalocean",
+            "api_token": "{{user `DIGITALOCEAN_TOKEN`}}",
+            "droplet_name": "{{user `DROPLET_NAME`}}",
+            "image": "{{user `IMAGE`}}",
+            "snapshot_name": "{{user `DROPLET_NAME`}}-{{timestamp}}",
+            "private_networking": "false",
+            "region": "{{user `REGION`}}",
+            "size": "{{user `SIZE`}}",
+            "ssh_port": "22"
+    }
+  ]
+}
