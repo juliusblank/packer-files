@@ -18,8 +18,7 @@
             "type": "shell",
             "execute_command": "echo 'czm'| {{ .Vars }} sudo -E -S sh '{{.Path}}'",
             "environment_vars": [
-                "CONSUL_VERSION={{user `CONSUL_VERSION`}}",
-                "run_proxy={{user `run_proxy`}}"
+                "CONSUL_VERSION={{user `CONSUL_VERSION`}}"
             ],
             "scripts": [
               "scripts/setup_base.sh",
