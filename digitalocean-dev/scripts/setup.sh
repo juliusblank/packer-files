@@ -9,7 +9,7 @@
 # TODO Setup azure-cli (container with systemd-unit (systemd-docker)          #
 # TODO Setup mesosphere dcos                                                  #
 # TODO Setup AWS cli                                                          #
-# TODO                                                                        #
+# TODO Setup Google Cloud SDK                                                                       #
 ###############################################################################
 
 set -e
@@ -31,8 +31,8 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 
 # Install required packages
-apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
-echo deb https://get.docker.com/ubuntu docker main > /etc/apt/sources.list.d/docker.list
+apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+echo deb https://apt.dockerproject.org/repo ubuntu-vivid main > /etc/apt/sources.list.d/docker.list
 
 apt-get update
 apt-get -y upgrade
@@ -49,7 +49,7 @@ apt-get -y install \
            unzip \
            screen \
            htop \
-           lxc-docker \
+           docker-engine \
            iotop
            
 # Create user julius

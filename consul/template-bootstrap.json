@@ -33,7 +33,7 @@
             "api_token": "{{user `DIGITALOCEAN_TOKEN`}}",
             "droplet_name": "{{user `DROPLET_NAME`}}",
             "image": "{{user `IMAGE`}}",
-            "snapshot_name": "{{user `DROPLET_NAME`}}-{{timestamp}}",
+            "snapshot_name": "{{user `DROPLET_NAME`}}",
             "private_networking": "false",
             "region": "{{user `REGION`}}",
             "size": "{{user `SIZE`}}",
