@@ -8,21 +8,18 @@
         "DROPLET_NAME": "{{env `DIGITALOCEAN_DROPLET_NAME`}}",
         "IMAGE": "{{env `DIGITALOCEAN_IMAGE`}}",
         "REGION": "{{env `DIGITALOCEAN_REGION`}}",
-        "SIZE": "{{env `DIGITALOCEAN_SIZE`}}",
-        "build_proxy": "{{env `http_proxy`}}",
-        "run_proxy": ""
+        "SIZE": "{{env `DIGITALOCEAN_SIZE`}}"
     },
 
     "provisioners": [
         {
             "type": "shell",
-            "execute_command": "echo 'czm'| {{ .Vars }} sudo -E -S sh '{{.Path}}'",
-            "environment_vars": [
-                "build_proxy={{user `build_proxy`}}",
-                "run_proxy={{user `run_proxy`}}"
-            ],
+            "execute_command": "echo 'julius'| {{ .Vars }} sudo -E -S sh '{{.Path}}'",
             "scripts": [
-              "scripts/setup.sh"
+              {
+                "scripts/setup.sh",
+                "scripts/docker.sh"
+              }
             ]
     }
   ],

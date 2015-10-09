@@ -14,14 +14,9 @@
 
 set -e
 
-###############################################################################
-# Setup the proxy for the build                                               #
-###############################################################################
-
-if [ -n "$build_proxy" ]; then
-  export http_proxy=${build_proxy}
-  export https_proxy=${build_proxy}
-  echo "Acquire::http::proxy \"${build_proxy}\";" >> /etc/apt/apt.conf.d/70debconf
+# Enable debug if set
+if [ ! -z "${DEBUG}" ]; then
+  set -x
 fi
 
 ###############################################################################
@@ -30,11 +25,7 @@ fi
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Install required packages
-apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-echo deb https://apt.dockerproject.org/repo ubuntu-vivid main > /etc/apt/sources.list.d/docker.list
-
-apt-get update
+apt-get -y update
 apt-get -y upgrade
 
 # Install required packages
@@ -49,8 +40,9 @@ apt-get -y install \
            unzip \
            screen \
            htop \
-           docker-engine \
-           iotop
+           iotop \
+           facter \
+           jq
            
 # Create user julius
 username="julius"
@@ -64,41 +56,10 @@ sed -i -e 's/%sudo  ALL=(ALL:ALL) ALL/%sudo  ALL=NOPASSWD:ALL/g' /etc/sudoers
 echo "UseDNS no" >> /etc/ssh/sshd_config
 
 ###############################################################################
-# Perform docker configuration and user setup                                 #
+# Setup Google Cloud SDK
 ###############################################################################
+export CLOUD_SDK_REPO=cloud-sdk-`lsb_release -c -s`
+echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo apt-get update && sudo apt-get install google-cloud-sdk
 
-# allow user julius to user docker without sudo
-usermod -aG docker ${username}
-
-# Setup the docker daemon
-cat <<EOF >/tmp/docker
-# Docker Upstart and SysVinit configuration file
-
-# Customize location of Docker binary (especially for development testing).
-#DOCKER="/usr/local/bin/docker"
-
-# If you need Docker to use an HTTP proxy, it can also be specified here.
-export http_proxy="${run_proxy}"
-export https_proxy="${run_proxy}"
-
-# This is also a handy place to tweak where Docker's temporary files go.
-#export TMPDIR="/mnt/bigdrive/docker-tmp"
-DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock -r=true ${DOCKER_OPTS}"
-
-EOF
-mv /tmp/docker /etc/default/docker
-
-
-###############################################################################
-# Remove build proxy settings and put in run proxy, if any                    #
-###############################################################################
-
-# Delete proxy entries (that may come from a proxy that was set for building this image)
-sed -i '/Acquire::http::proxy/d' /etc/apt/apt.conf.d/70debconf
-
-if [ -n "$run_proxy" ]; then
-  # Put in the proxy we want this machine to run with
-  echo "http_proxy=${run_proxy}" >> /etc/environment
-  echo "https_proxy=${run_proxy}" >> /etc/environment
-  echo "Acquire::http::proxy \"${run_proxy}\";" >> /etc/apt/apt.conf.d/70debconf
-fi
