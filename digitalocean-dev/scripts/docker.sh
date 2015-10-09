@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOCKER_VERSION="1.8.2.0~trusty"
+DOCKER_VERSION="1.8.2-0~trusty"
 DOCKER_COMPOSE_VERSION="1.4.0"
 ###############################################################################
 # Install docker                                                              #
