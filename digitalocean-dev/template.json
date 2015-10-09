@@ -16,11 +16,9 @@
             "type": "shell",
             "execute_command": "echo 'julius'| {{ .Vars }} sudo -E -S sh '{{.Path}}'",
             "scripts": [
-              {
-                "scripts/setup.sh",
-                "scripts/docker.sh"
-              }
-            ]
+              "scripts/setup.sh",
+              "scripts/docker.sh"
+           ] 
     }
   ],
 
@@ -38,3 +36,4 @@
     }
   ]
 }
+
