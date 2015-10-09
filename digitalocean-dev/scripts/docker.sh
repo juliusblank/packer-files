@@ -2,6 +2,8 @@
 
 DOCKER_VERSION="1.8.2-0~trusty"
 DOCKER_COMPOSE_VERSION="1.4.0"
+DOCKER_USER="julius"
+
 ###############################################################################
 # Install docker                                                              #
 ###############################################################################
@@ -25,7 +27,7 @@ curl -L https://raw.githubusercontent.com/docker/compose/$(docker-compose --vers
 ###############################################################################
 
 # allow user czm to user docker without sudo
-usermod -aG docker vagrant
+usermod -aG docker julius
 
 # Setup the docker daemon
 cat <<EOF >/tmp/docker
