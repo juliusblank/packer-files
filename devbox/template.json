@@ -5,7 +5,7 @@
         "memory": "2048",
         "disk_size": "40960",
         "ssh_port": "22",
-        "vm_name": "forum",
+        "vm_name": "devbox",
         "build_proxy": "{{env `http_proxy`}}",
         "run_proxy": "",
         "version": "1.0.3"
@@ -13,7 +13,7 @@
 
     "push": {
         "name": "juliusblank/devbox",
-        "token": "{{user `atlas_token`}}
+        "token": "{{user `atlas_token`}}"
     },
 
 
