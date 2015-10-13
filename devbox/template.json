@@ -1,5 +1,6 @@
 {
     "variables": {
+        "atlas_token": "{{env `ATLAS_TOKEN`}}",
         "core": "2",
         "memory": "2048",
         "disk_size": "40960",
@@ -7,7 +8,12 @@
         "vm_name": "forum",
         "build_proxy": "{{env `http_proxy`}}",
         "run_proxy": "",
-        "version": "1.0.2"
+        "version": "1.0.3"
+    },
+
+    "push": {
+        "name": "juliusblank/devbox",
+        "token": "{{user `atlas_token`}}
     },
 
 
@@ -36,6 +42,15 @@
             "type": "vagrant",
             "output": "{{user `vm_name`}}_{{.Provider}}_{{user `version`}}.box",
             "keep_input_artifact": false
+        },
+        {
+            "type": "atlas",
+            "token": "{{user `atlas_token`}}",
+            "artifact": "julisblank/devbox",
+            "artifact_type": "vagrant",
+            "metadata": {
+                "created_at": "{{timestamp}}"
+            }
         }
     ],
     "builders": [
