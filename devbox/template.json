@@ -47,7 +47,7 @@
             "type": "atlas",
             "token": "{{user `atlas_token`}}",
             "artifact": "juliusblank/devbox",
-            "artifact_type": "vagrant",
+            "artifact_type": "vagrant.box",
             "metadata": {
                 "created_at": "{{timestamp}}"
             }
