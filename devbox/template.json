@@ -1,0 +1,134 @@
+{
+    "variables": {
+        "core": "2",
+        "memory": "2048",
+        "disk_size": "40960",
+        "ssh_port": "22",
+        "vm_name": "forum",
+        "build_proxy": "{{env `http_proxy`}}",
+        "run_proxy": "",
+        "version": "1.0.2"
+    },
+
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "execute_command": "echo 'vagrant'| {{ .Vars }} sudo -E -S sh '{{.Path}}'",
+            "environment_vars": [
+                "build_proxy={{user `build_proxy`}}",
+                "run_proxy={{user `run_proxy`}}"
+            ],
+            "scripts": [
+              "scripts/init.sh",
+                "scripts/base.sh",
+                "scripts/virtualbox.sh",
+                "scripts/vmware.sh",
+                "scripts/vagrant.sh",
+                "scripts/docker.sh",
+                "scripts/cleanup.sh",
+                "scripts/zerodisk.sh"
+            ]
+    }
+  ],
+    "post-processors": [
+        {
+            "type": "vagrant",
+            "output": "{{user `vm_name`}}_{{.Provider}}_{{user `version`}}.box",
+            "keep_input_artifact": false
+        }
+    ],
+    "builders": [
+        {
+            "type": "vmware-iso",
+            "vm_name": "{{user `vm_name`}}",
+            "guest_os_type": "ubuntu-64",
+            "disk_size": "{{user `disk_size`}}",
+            "iso_url": "http://releases.ubuntu.com/trusty/ubuntu-14.04.3-server-amd64.iso",
+            "iso_checksum": "9e5fecc94b3925bededed0fdca1bd417",
+            "iso_checksum_type": "md5",
+            "vmx_data": {
+                "cpuid.coresPerSocket": "1",
+                "memsize": "{{user `memory`}}",
+                "numvcpus": "{{user `core`}}"
+            },
+
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "ssh_port": "{{user `ssh_port`}}",
+            "ssh_wait_timeout": "30m",
+
+            "http_directory": "http_installer_content",
+            "http_port_min": "9001",
+            "http_port_max": "9001",
+
+            "tools_upload_flavor": "linux",
+
+            "boot_command": [
+        "<esc><esc><enter><wait>",
+        "/install/vmlinuz noapic ",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
+        "debian-installer auto ",
+        "locale=de_DE ",
+        "language=de ",
+        "country=DE ",
+        "keyboard-configuration/layoutcode=de ",
+        "keyboard-configuration/modelcode=pc105 ",
+        "localechooser/translation/warn-light=true ",
+        "localechooser/translation/warn-severe=true ",
+        "console-setup/ask-detect=false ",
+        "mirror/http/proxy={{user `build_proxy`}} ",
+        "hostname={{ .Name }} ",
+        "fb=false ",
+        "debconf/frontend=noninteractive ",
+        "initrd=/install/initrd.gz -- <enter>"
+      ],
+            "shutdown_command": "echo 'shutdown -P now' > /tmp/shutdown.sh; echo 'vagrant'|sudo -S sh '/tmp/shutdown.sh'"
+    },
+
+        {
+            "type": "virtualbox-iso",
+            "vm_name": "{{user `vm_name`}}",
+            "guest_os_type": "Ubuntu_64",
+            "disk_size": "{{user `disk_size`}}",
+            "iso_url": "http://releases.ubuntu.com/trusty/ubuntu-14.04.3-server-amd64.iso",
+            "iso_checksum": "9e5fecc94b3925bededed0fdca1bd417",
+            "iso_checksum_type": "md5",
+
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "ssh_wait_timeout": "30m",
+
+            "http_directory": "http_installer_content",
+            "http_port_min": "9001",
+            "http_port_max": "9001",
+
+            "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+            "virtualbox_version_file": ".vbox_version",
+
+            "boot_command": [
+        "<esc><esc><enter><wait>",
+        "/install/vmlinuz noapic ",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
+        "debian-installer auto ",
+        "locale=de_DE ",
+        "language=de ",
+        "country=DE ",
+        "keyboard-configuration/layoutcode=de ",
+        "keyboard-configuration/modelcode=pc105 ",
+        "localechooser/translation/warn-light=true ",
+        "localechooser/translation/warn-severe=true ",
+        "console-setup/ask-detect=false ",
+        "mirror/http/proxy={{user `build_proxy`}} ",
+        "hostname={{ .Name }} ",
+        "fb=false ",
+        "debconf/frontend=noninteractive ",
+        "initrd=/install/initrd.gz -- <enter>",
+        "",
+        "",
+        ""
+      ],
+            "shutdown_command": "echo 'shutdown -P now' > /tmp/shutdown.sh; echo 'vagrant'|sudo -S sh '/tmp/shutdown.sh'"
+          }
+  ]
+}
