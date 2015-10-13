@@ -1,14 +1,13 @@
 {
     "variables": {
-        "atlas_token": "{{env `ATLAS_TOKEN`}}",
-        "core": "2",
+        "core": "1",
         "memory": "1024",
         "disk_size": "20480",
         "ssh_port": "22",
         "vm_name": "devbox",
         "build_proxy": "{{env `http_proxy`}}",
         "run_proxy": "",
-        "version": "1.0.{{env ATLAS_BUILD_CONFIGURATION_VERSION}}"
+        "version": "1.0.{{env `ATLAS_BUILD_CONFIGURATION_VERSION`}}"
     },
 
     "push": {
@@ -37,25 +36,33 @@
             ]
     }
   ],
-    "post-processors": [
-        {
-            "type": "vagrant",
-            "output": "{{user `vm_name`}}_{{.Provider}}_{{user `version`}}.box",
-            "keep_input_artifact": false
-        },
-        {
-            "type": "atlas",
-            "token": "{{user `atlas_token`}}",
-            "artifact": "juliusblank/devbox",
-            "artifact_type": "vagrant.box",
-            "metadata": {
-                "created_at": "{{timestamp}}",
-                "provider": "{{.Provider}}",
-                "version": "{{user `version`}}",
-                "namw": "{{user `vm_name`}}"
-            }
+  
+  "post-processors": [
+    [{
+        "type": "vagrant",
+        "keep_input_artifact": false
+    },
+    {
+        "type": "atlas",
+        "only": ["vmware-iso"],
+        "artifact": "juliusblank/devbox",
+        "artifact_type": "vagrant.box",
+        "metadata": {
+            "provider": "vmware_desktop",
+            "version": "{{user `version`}}"
         }
-    ],
+    },
+    {
+        "type": "atlas",
+        "only": ["virtualbox-iso"],
+        "artifact": "juliusblank/devbox",
+        "artifact_type": "vagrant.box",
+        "metadata": {
+            "provider": "virtualbox",
+            "version": "{{user `version`}}"
+        }
+    }]
+],
     "builders": [
         {
             "type": "vmware-iso",
